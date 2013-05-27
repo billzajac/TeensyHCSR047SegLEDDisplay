@@ -1,5 +1,15 @@
 #include <SoftwareSerial.h>
 
+/*
+Copyright (C) 2013 William Zajac
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 /* 
 --------------------------------------------------
 7 Segment LED display with serial communication
@@ -32,9 +42,8 @@ measurement cycle, in order to prevent trigger signal to the echo signal.
 ----
 VCC -> 5v GND 
 GND -> COMMON GROUND
-Echo to Arduino pin 13 Trig to Arduino pin 12
-Red POS to Arduino pin 11
-Green POS to Arduino pin 10
+Echo -> Arduino 13
+Trig -> Arduino 12
 ----
 */
 #define trigPin 12
@@ -69,9 +78,11 @@ void setup() {
   //displaySerial.print(B00000100,BYTE);
  
   pinMode(serialDisplayPin, OUTPUT);
+
   //displaySerial.write(0x7A); // Brightness command bit. Must be followed by:
   //displaySerial.write(0x01); // FF is dimmest, 01 is brightest. Can also use displaySerial.print("z1")
   //displaySerial.print("wB"); // Turn the 2nd dot on. w@ turns all off.
+
   serialDisplay.begin(9600);
   serialDisplay.print("z");
   delay(100);
