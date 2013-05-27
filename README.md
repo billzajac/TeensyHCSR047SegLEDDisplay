@@ -26,3 +26,8 @@ Formula: uS / 58 = centimeters or uS / 148 =inch; or: the range = high level tim
 ## LED
 * Pin 13 has an LED connected on most Arduino boards.
 * Pin 11 has the LED on Teensy 2.0
+
+## Pictures
+![Front](front.jpg)
+![Back](back.jpg)
+
