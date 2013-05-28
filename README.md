@@ -32,3 +32,5 @@ Formula: uS / 58 = centimeters or uS / 148 =inch; or: the range = high level tim
 ![Front](front.jpg)
 ![Back](back.jpg)
 
+## Fritzing
+![TeensyHCSR04_bb.jpg](TeensyHCSR04_bb.jpg)
