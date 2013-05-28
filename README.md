@@ -15,6 +15,7 @@ This will interfere with INPUT on this pin!  You must be sure to switch this pin
 ## HC-SR04 Ping distance sensor
 * http://www.amazon.com/Ultrasonic-Module-HC-SR04-Distance-Arduino/dp/B004U8TOE6
 * http://www.micropik.com/PDF/HCSR04.pdf
+* Now using this library: https://code.google.com/p/arduino-new-ping/
 Formula: uS / 58 = centimeters or uS / 148 =inch; or: the range = high level time * velocity (340M/S) / 2; we suggest to use over 60ms measurement cycle, in order to prevent trigger signal to the echo signal.
 
 ### Wiring

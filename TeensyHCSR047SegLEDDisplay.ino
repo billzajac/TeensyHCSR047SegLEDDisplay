@@ -1,5 +1,3 @@
-#include <SoftwareSerial.h>
-
 /*
 Copyright (C) 2013 William Zajac
 
@@ -27,6 +25,7 @@ GND -> Arduino GND
 RX -> Arduino A0
 ----
 */
+#include <SoftwareSerial.h>
 int serialDisplayPin = A0;
 SoftwareSerial serialDisplay(1, serialDisplayPin);
 
@@ -46,8 +45,11 @@ Echo -> Arduino 13
 Trig -> Arduino 12
 ----
 */
-#define trigPin 12
-#define echoPin 13
+#include <NewPing.h>
+#define TRIGGER_PIN  12  // Arduino pin tied to trigger pin on the ultrasonic sensor.
+#define ECHO_PIN     13  // Arduino pin tied to echo pin on the ultrasonic sensor.
+#define MAX_DISTANCE 400 // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400-500cm.
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
 
 /*
@@ -67,12 +69,10 @@ void setup() {
   // initialize the digital pin as an output for the LED
   pinMode(led, OUTPUT);
   
-  Serial.begin (9600);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  Serial.begin (115200); // Open serial monitor at 115200 baud to see ping results.
   
   // If we want to play with faster communication rate
-  //displaySerial.begin (19200);
+  //displaySerial.begin (115200);
   //delay(50);
   //displaySerial.print(B01111111,BYTE);
   //displaySerial.print(B00000100,BYTE);
@@ -98,45 +98,45 @@ void setup() {
 /* -------------------------------------------------- */
 void loop() {
   // Measure distance with the HC-SR04
-  long duration, distance;
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  duration = pulseIn(echoPin, HIGH);
-  distance = (duration/2) / 29.1; // cm
-  // distance = duration/58; // cm
-
+  delay(50);                           // Wait 50ms between pings (about 20 pings/sec). 29ms should be the shortest delay between pings.
+  unsigned int uS = sonar.ping();      // Send ping, get ping time in microseconds (uS)
+  int distance = uS / US_ROUNDTRIP_CM; // Convert ping time to distance in cm (0 = outside set distance range)
   
   // Vary the blink rate based on the distance measured
-  // To keep the 60 ms minimum recommended cycle, we will be able to measure to
-  // 3 cm minimum accuracy if we use a multiplier of 10
   if (distance < 30) {
-    digitalWrite(led,HIGH);
-    delay(10 * distance);
-    digitalWrite(led,LOW);
-    delay(10 * distance);
+    blink(10 * distance, 1);
   }
   else {
-    digitalWrite(led,HIGH);
-    delay(300);  // Out of range default blink is 500 ms
-    digitalWrite(led,LOW);
-    delay(300);  // Out of range default blink is 500 ms
+    blink(300, 1);
   }  
   
   // Now print the info to the serial and to the display
-  //if (distance >= 200 || distance <= 0){
-  //  Serial.println("Out of range");
-  //  serialDisplay.print("OOR ");
-  //}
-  //else {
-    Serial.print(distance);  
+  if (distance == 0){
+    Serial.print("Out of range (greater than ");
+    Serial.print(MAX_DISTANCE);
+    Serial.println("cm)");
+
+    serialDisplay.print("OOR ");
+  }
+  else {
+    Serial.print("Ping: ");
+    Serial.print(distance); // (0 = outside set distance range)
+    Serial.println("cm");
+
     // This is how to get sprintf behavior: 
     // dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
     // Note: our 7 segment LED display is 4 chars in size
     char buffer[4];
     dtostrf(distance,4,0,buffer);
     serialDisplay.print(buffer);
-  //}
+  }
+}
+
+void blink(int blinkDelay, int blinkTimes) {
+  for (int i = 0; i < blinkTimes; i++) {
+    digitalWrite(led,HIGH);
+    delay(blinkDelay);
+    digitalWrite(led,LOW);
+    delay(blinkDelay);
+  }
 }
